@@ -72,6 +72,7 @@ mqtt_client.on_connect = on_connect  # 连接后的操作
 mqtt_client.loop_start()
 time.sleep(2)
 '''
+5
 count = 0
 while count < 5:  # 发布五条消息
     count = count + 1

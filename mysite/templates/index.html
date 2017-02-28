@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+</head>
+<body>
+    <hl style="background-color: antiquewhite;color: black;">hello chark</hl>
+    <hl style="...">用户输入</hl>
+    <form action="/index/" method="post">
+        <input type="text" name="username"/>
+        <input type="password" name="password"/>
+        <input type="submit" value="提交"/>
+    </form>
+    <hr />
+    <hl style="...">用户展示</hl>
+    <table border="1">
+        <thead>
+            <th>用户名</th>
+            <th>密码</th>
+        </thead>
+        <tbody>
+            {% for line in data %}
+                <tr>
+                    <td>{{ line.user }}</td>
+                    <td>{{ line.pwd }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script src = "/static/js/jquery-3.1.1.min.js"></script>
+</body>
+</html>

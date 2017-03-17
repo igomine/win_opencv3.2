@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>防喷器自检</title>
+    <link rel="stylesheet" href="../static/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/selfcheck.css">
+</head>
+<body>
+<div class="container">
+    <div id="header">
+        <div>
+            <a href="index.html">
+                <img id="headerlogo" src="../static/imgs/logo.png">
+            </a>
+            <span id="headertitle">Websockets Clent</span>
+        </div>
+    </div>
+    <!-- Connection panel -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span id="connectionStatus">未连接.</span>
+                </div>
+                <div class="panel-body" id="serverCollapse">
+                    <form>
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <div class="form-group">
+                                    <label for="hostInput">Host</label>
+                                    <input type="text" class="form-control" id="hostInput"
+                                           value="ds11-01.mqtt.iot.gz.baidubce.com">
+                                </div>
+                            </div>
+                            <div class="col-lg-1">
+                                <div class="form-group">
+                                    <label for="portInput">Port</label>
+                                    <input type="text" class="form-control" id="portInput" value="8884">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label for="clientIdInput">Client ID</label>
+                                    <input type="text" class="form-control" id="clientIdInput"
+                                           value="javascript-client">
+                                </div>
+                            </div>
+                            <div class="col-lg-1">
+                                <div class="form-group">
+                                    <label for="clientConnectButton"></label>
+                                    <a id="clientConnectButton" class="btn btn-default" onclick="connectionToggle();">Connect</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label for="pathInput">Path</label>
+                                    <input type="text" class="form-control" id="pathInput" value="">
+                                </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label for="userInput">Username</label>
+                                    <input type="text" class="form-control" id="userInput" value="ds11-01/teacher-pc">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label for="passInput">Password</label>
+                                    <input type="password" class="form-control" id="passInput"
+                                           value="dfe6ngoXpa3x14kayxBpUyoMr4npLaRMbx4/d+JO4Zg=">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label for="keepAliveInput">Keep-Alive</label>
+                                    <input type="text" class="form-control" id="keepAliveInput" value="60">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-1">
+                                <div class="form-group">
+                                    <label for="timeoutInput">Timeout</label>
+                                    <input type="text" class="form-control" id="timeoutInput" value="3">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-1">
+                                <div class="form-group">
+                                    <label for="sslInput">TLS</label>
+                                    <input type="checkbox" class="special-checkbox" id="sslInput" checked="checked">
+                                </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label for="cleanSessionInput">Clean Session</label>
+                                    <input type="checkbox" class="special-checkbox" id="cleanSessionInput" value="">
+                                </div>
+
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label for="lwtInput">Last Will Topic</label>
+                                    <input type="text" class="form-control" id="lwtInput">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-1">
+                                <div class="form-group">
+                                    <label for="lwQosInput">QoS</label>
+                                    <select class="form-control" id="lwQosInput">
+                                        <option>0</option>
+                                        <option selected="selected">1</option>
+                                        <option>2</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-1">
+                                <div class="form-group">
+                                    <label for="lwRetainInput">Retain</label>
+                                    <input type="checkbox" class="special-checkbox" id="lwRetainInput" value="">
+                                </div>
+                            </div>
+                            <div class="col-lg-7">
+                                <div class="form-group">
+                                    <label for="lwMInput">Last Will Message</label>
+                                    <textarea class="form-control" id="lwMInput" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- sub and pub panel -->
+    <div class="row">
+        <!-- Subscription panel -->
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Subscribe
+                </div>
+                <div class="panel-body" id="subscribeCollapse">
+
+                    <form class="form-horizontal">
+
+                        <div class="form-group">
+                            <label for="subscribeTopicInput" class="col-sm-2 control-label">Topic</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="subscribeTopicInput" value="wan/o2o/fpq/force/bfk" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="subscribeQosInput" class="col-sm-2 control-label">QoS</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="subscribeQosInput" disabled>
+                                    <option>0</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button id="subscribeButton" type="button" class="btn btn-default"
+                                        onclick="subscribe();" disabled>Subscribe
+                                </button>
+                                <button id="unsubscribeButton" type="button" class="btn btn-default"
+                                        onclick="unsubscribe();" disabled>Unsubscribe
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- End of Subscription panel -->
+        <!-- Publish panel -->
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Publish Message
+                </div>
+                <div class="panel-body" id="publishCollapse">
+                    <form>
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <div class="form-group">
+                                    <label for="publishTopicInput">Topic</label>
+                                    <input type="text" class="form-control" id="publishTopicInput" value="wan/o2o/fpq/force/do/bfk"
+                                           disabled>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label for="publishQosInput">QoS</label>
+                                    <select class="form-control" id="publishQosInput" disabled>
+                                        <option>0</option>
+                                        <option>1</option>
+                                        <option>2</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-1">
+                                <div class="form-group">
+                                    <label for="publishRetainInput">Retain</label>
+                                    <input type="checkbox" class="special-checkbox" id="publishRetainInput" value=""
+                                           disabled>
+                                </div>
+                            </div>
+                            <div class="col-lg-1">
+                                <div class="form-group">
+                                    <label for="publishButton"></label>
+                                    <button id="publishButton" type="button" class="btn btn-default"
+                                            onclick="publish();" disabled>Publish</a>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="publishMessageInput">Message</label>
+                                    <textarea class="form-control" id="publishMessageInput" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- End of Publish panel -->
+    </div>
+    <!-- Last msg panel -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a class="chevron-toggle" data-toggle="collapse" data-target="#subscriptionsCollapse"
+                       href="#collapseOne">
+                        Last Messages
+                    </a>
+                </div>
+                <div class="panel-body collapse in fixed-height-panel" id="subscriptionsCollapse">
+                    <table class="table table-hover table-condensed tableSection" id="lastMessageTable">
+                        <thead>
+                        <tr>
+                            <th>Topic</th>
+                            <th>Payload</th>
+                            <th>Time</th>
+                            <th>QoS</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- History msg panel -->
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a class="chevron-toggle" data-toggle="collapse" data-target="#historyCollapse" href="#collapseOne">
+                        History
+                    </a>
+                </div>
+                <div class="panel-body collapse in fixed-height-panel" id="historyCollapse">
+                    <span class="right"><a href="#" onclick="clearHistory()">Clear History</a></span>
+                    <table class="table table-hover table-condensed  tableSection" id="incomingMessageTable">
+
+                        <thead>
+                        <tr>
+                            <th>Topic</th>
+                            <th>Payload</th>
+                            <th>Time</th>
+                            <th>Qos</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- test snap svg-->
+    <div class="row">
+        <div class="col-md-12">
+            <div id="clockDiv" align="center"></div>
+
+            <br/>
+            <input type="button" value="变色" onclick="changC()"/>
+
+        </div>
+
+    </div>
+</div>
+<script src="../static/js/snap.svg-min.js"></script>
+<!-- Source Paho MQTT Client-->
+<script src="../static/js/mqttws31.js"></script>
+<!-- Utility Javascript -->
+<script src="../static/js/utility.js"></script>
+<!-- Javascript used for Bootstrap Theme -->
+<script src="../static/js/jquery-3.1.1.min.js"></script>
+<script src="../static/js/bootstrap.min.js"></script>
+<script>
+
+    window.onload = function () {
+        var s = Snap("#clockDiv");
+        Snap.load("../static/imgs/fpq-plain.svg",function (f) {
+            bfk = f.select("#bfk");
+            bfk.hover(function () {
+                bfk.attr({
+                   stroke:'black',
+                    strokeOpacity:.3,
+                    strokeWidth:5
+                });
+            },
+                function () {
+                bfk.attr(
+                   'stroke','none'
+                );
+                }
+            );
+            bfk.click(function () {
+                if(bfk_state==true)
+                {
+                    bfk.attr('fill','#666666');
+                    bfk_state=false;
+                    lamp_publish("wan/o2o/fpq/force/do/bfk","0");
+                }
+                else
+                {
+                    bfk.attr('fill','#00ff00');
+                    bfk_state=true;
+                    lamp_publish("wan/o2o/fpq/force/do/bfk","1");
+                }
+                }
+
+            );
+//            second = f.select("#second");
+//            minute = f.select("#minute");
+//            hour = f.select("#hour");
+//            animateTime();
+            s.append(f);
+        });
+    };
+function changC() {
+                bfk.attr({
+                fill:'coral'
+            })
+}
+function animateTime() {
+//Get the current time
+  var timeNow = new Date();
+  var hours   = timeNow.getHours();
+  var minutes = timeNow.getMinutes();
+  var seconds = timeNow.getSeconds();
+//Move second needle halfway
+  second.transform('r' + (seconds*6-3) + ',50,50');
+//Animate the second needle the rest of the way
+  second.animate({transform: 'r' + (seconds*6) + ',50,50'}, 500, mina.elastic);
+//Move minute needle
+  minute.transform('r' + (minutes*6) + ',50,50');
+//Only animate the minute needle when the minute changes
+  if(seconds == 0){minute.transform('r' + (minutes*6-3) + ',50,50');
+  minute.animate({transform: 'r' + (minutes*6) + ',50,50'}, 500, mina.elastic);}
+//Allow the hour needle to move accordingly when the minutes change
+  hour.transform('r' + ((hours*30)+(minutes/2)) + ',50,50');
+//Repeat this entire function every 1 second
+  setTimeout("animateTime()", 1000);
+  }
+
+</script>
+
+</body>
+</html>

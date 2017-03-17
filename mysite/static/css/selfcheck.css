@@ -1,0 +1,37 @@
+#container{
+    width:980px;
+    margin:0px auto;
+}
+body {
+    /*padding-top: 70px;*/
+    /*padding-bottom: 20px;*/
+    background: #eee6cb;
+}
+#header{
+    float: none;
+    margin: 0 auto;
+    padding: 0;
+    height: 80px;
+    background-color: #f2f2f2;
+    border-bottom: solid 2px #000000;
+    margin-bottom: 20px;
+    width: 100%;
+}
+/*#header > div {*/
+    /*max-width: 62.5em;*/
+    /*margin: 0 auto;*/
+/*}*/
+#headerlogo {
+    margin-left: 20px;
+    margin-top: 5px;
+}
+#headertitle {
+    float: right;
+    margin-top: 30px;
+    margin-right: 20px;
+}
+.special-checkbox {
+  display: block;
+    width:20px;
+     height:20px;
+}

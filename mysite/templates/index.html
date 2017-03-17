@@ -3,6 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>test</title>
+      <script type="text/javascript">
+         function WebSocketTest()
+         {
+            if ("WebSocket" in window)
+            {
+                alert("您的浏览器支持 WebSocket!");
+
+                socket = new WebSocket("ws://" + "localhost:8000" + "/mysite/");
+                socket.onmessage = function(e) {
+                    alert(e.data);
+                }
+                socket.onopen = function() {
+                    socket.send("hello world");
+                }
+                // Call onopen directly if socket is already open
+                if (socket.readyState == WebSocket.OPEN) socket.onopen();
+            }
+
+            else
+            {
+               // 浏览器不支持 WebSocket
+               alert("您的浏览器不支持 WebSocket!");
+            }
+         }
+      </script>
 </head>
 <body>
     <hl style="background-color: antiquewhite;color: black;">hello chark</hl>
@@ -28,7 +53,10 @@
             {% endfor %}
         </tbody>
     </table>
-
+    <hr />
+    <div id="sse">
+        <a href="javascript:WebSocketTest()">运行 WebSocket</a>
+    </div>
     <script src = "/static/js/jquery-3.1.1.min.js"></script>
 </body>
 </html>

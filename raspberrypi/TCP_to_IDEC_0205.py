@@ -5,7 +5,11 @@ import logging
 import time
 import paho.mqtt.client as mqtt
 import json
+import sys
 
+logging.basicConfig()
+log = logging.getLogger()
+log.setLevel(logging.INFO)
 
 # <editor-fold desc="mqtt callback">
 def on_fpq_do_hx_message(client, userdata, msg):
@@ -26,20 +30,20 @@ def on_fpq_do_sbf_message(client, userdata, msg):
 
 
 def on_message(client, userdata, msg):
-    print("topic:" + msg.topic + " Message:" + str(msg.payload) + "with QoS" + str(msg.qos))
+    logging.info("topicc:" + msg.topic + " Message:" + str(msg.payload) + "with QoS" + str(msg.qos))
 
 
 def on_publish(msg, rc):  # 成功发布消息的操作
     if rc == 0:
-        print("publish success, msg = " + msg)
+        logging.info("publish success, msg = " + msg)
 
 
 def on_connect(client, userdata, flags, rc):  # 连接后的操作 0为成功
     if rc == 0:
-        print("Connection successful")
-        client.subscribe("one2one/fpq/#", qos=1)  # qos
+        logging.info("mqtt client connection successful")
+        client.subscribe("one2one/fpq/do/#", qos=1)  # qos
     else:
-        print("Error:Connection returned " + str(rc))
+        logging.info("Error:connection returned " + str(rc))
 # </editor-fold>
 
 
@@ -70,45 +74,34 @@ mqtt_client.message_callback_add("one2one/fpq/sbf", on_fpq_do_sbf_message)
 # mqtt_client.loop_start()
 # time.sleep(2)
 
-received_discrete_inputs_data = [False]*8
-
-
-def compare_update_di_list(old_list, new_list):
-    for i in range(0, len(new_list)):
-        if old_list[i] == new_list[i]:
-            pass
-        else:  # 两个列表对应元素不同，则输出对应的索引
-            print("update bytes[%d];" %i +"value=" + str(new_list[i]))
-    old_list = new_list
-
 
 class ModbusTcpToIDEC:
-    def __init__(self, devname, di_channel):
+    def __init__(self, devname, di_channel, wiringtable):
         self.lastval = [False]*di_channel
         self.devname = devname
+        self.wiring = wiringtable
 
     def poll(self):
         try:
+            # time1 = time.time()
             rr = modbus_client.read_discrete_inputs(0, 8, unit=0x01)
+            # time2 = time.time()
+            # print(time2-time1)
             for i in range(0, len(rr.bits)):
                 if self.lastval[i] == rr.bits[i]:
                     pass
                 else:
-                    print("update bytes[%d];" % i + "value=" + str(rr.bits[i]))
+                    # logging.info("update bytes[%d];" % i + "value=" + str(rr.bits[i]))
                     # send msg to mqtt broker
-                    fulltopic = "one2one/" + self.devname
+                    fulltopic = "wan/o2o/" + self.devname + "/stchg/" + "di/" + self.wiring[i]
+                    logging.info("pub " + fulltopic + ", msg " + str(rr.bits[i]))
+                    mqtt_client.publish(fulltopic, payload=int(rr.bits[i]), qos=1)
             self.lastval = rr.bits
         except Exception as exc:
-            print("Error reading " + ": %s", exc)
+            logging.error("Error reading " + ": %s", exc)
 
 
-def modbus_rr():
-    # while threads_switch:
-    rr = modbus_client.read_discrete_inputs(0, 8, unit=0x01)
-    global received_discrete_inputs_data
-    compare_update_di_list(received_discrete_inputs_data, rr.bits)
-    # print("list response:" + str(rr.bits))
-    # print(int(rr.bits[2]))
+
 
 
 # global read_discrete_inputs_data
@@ -129,23 +122,34 @@ def modbus_print():
             discrete_inputs_data = read_discrete_inputs_data
 
 
-logging.basicConfig()
-log = logging.getLogger()
-log.setLevel(logging.CRITICAL)
 
-modbus_client = ModbusClient('192.168.1.133', port=502, retries=2, framer=ModbusFramer)
-# modbus_client.close()
-modbus_client.connect()
+try:
+    mqtt_client.username_pw_set(user, pwd)  # 设置用户名，密码
+    mqtt_client.on_connect = on_connect  # 连接后的操作
+    mqtt_client.on_message = on_message
+    mqtt_client.connect(endpoint, port, 60)  # 连接服务 keepalive=60
+    mqtt_client.loop_start()
+    time.sleep(2)
+    logging.info("mqtt loop start")
 
-write_coils_data = []
+    modbus_client = ModbusClient('192.168.1.133', port=502, retries=2, framer=ModbusFramer)
+    # modbus_client.close()
+    modbus_client.connect()
 
-discrete_inputs_data = []
-threads_switch = 1
-idecrr = ModbusTcpToIDEC("fpq", 8)
-while True:
-    idecrr.poll()
-    # time.sleep(1)
+    write_coils_data = []
 
+    fpq_di_wiring = ["hxk", "hxg", "qyk", "qyk", "ptk", "ptg", "sbfk", "sbfg"]
+    discrete_inputs_data = []
+    threads_switch = 1
+    idecrr = ModbusTcpToIDEC("fpq", 8, fpq_di_wiring)
+
+    while True:
+        idecrr.poll()
+        # time.sleep(1)
+
+except Exception as e:
+    logging.error("Unhandled error [" + str(e) + "]")
+    sys.exit(1)
 
 #
 # threads = []

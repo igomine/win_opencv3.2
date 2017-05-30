@@ -8,13 +8,13 @@ cv2.namedWindow("testwin")
 cv2.imshow("testwin", bb_image)
 
 
-channel_R = np.zeros((bb_image.shape[0], bb_image.shape[1]), dtype=bb_image.dtype)
-channel_G = np.zeros([bb_image.shape[0], bb_image.shape[1]], dtype=bb_image.dtype)
-channel_B = np.zeros([bb_image.shape[0], bb_image.shape[1]], dtype=bb_image.dtype)
+channel_R = np.zeros((bb_image.shape[0], bb_image.shape[1], 3), dtype=bb_image.dtype)
+channel_G = np.zeros([bb_image.shape[0], bb_image.shape[1], 3], dtype=bb_image.dtype)
+channel_B = np.zeros([bb_image.shape[0], bb_image.shape[1], 3], dtype=bb_image.dtype)
 
-channel_B[:, :] = bb_image[:, :, 0]
-channel_G[:, :] = bb_image[:, :, 1]
-channel_R[:, :] = bb_image[:, :, 2]
+channel_B[:, :, 0] = bb_image[:, :, 0]
+channel_G[:, :, 1] = bb_image[:, :, 1]
+channel_R[:, :, 2] = bb_image[:, :, 2]
 
 cv2.namedWindow("win_b")
 cv2.imshow("win_b", channel_B)

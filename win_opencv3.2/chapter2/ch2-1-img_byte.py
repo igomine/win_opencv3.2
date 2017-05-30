@@ -2,7 +2,7 @@ import cv2
 import numpy
 import os
 
-
+# os.urandom 以字节为单位生成随机数
 randomByteArray = bytearray(os.urandom(120000))
 flatNumpyArray = numpy.array(randomByteArray)
 

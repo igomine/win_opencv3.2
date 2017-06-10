@@ -20,9 +20,9 @@ def get_file_content(filePath):
         return fp.read()
 
 # 调用人脸属性检测接口
-result = aipFace.detect(get_file_content('../../images/xichang.jpg'), options)
-img = cv2.imread('../../images/xichang.jpg')
-cv2.imshow('11', img)
+result = aipFace.detect(get_file_content('../../images/theron.jpg'), options)
+img = cv2.imread('../../images/theron.jpg')
+
 # print("number of faces:" + str(result['result_num']))
 print("total result:")
 for key, value in result.items():
@@ -31,5 +31,17 @@ for key, value in result.items():
 print("detail result:")
 for key, value in result['result'][0].items():
     print(key, '-->', value)
+
+result_list = result['result']
+for faces in range(result['result_num']):
+    x1 = result['result'][faces]['location']['left']
+    y1 = result['result'][faces]['location']['top']
+    x2 = x1 + result['result'][faces]['location']['width']
+    y2 = y1 + result['result'][faces]['location']['height']
+    age = int(result['result'][faces]['age'])
+    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 1)
+    cv2.putText(img, 'age'+str(age), (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, False)
+
+cv2.imshow('11', img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
